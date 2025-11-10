@@ -1,0 +1,41 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">postgres</property>
+        
+        <!-- Connection pool settings -->
+        <property name="hibernate.connection.pool_size">10</property>
+        
+        <!-- SQL dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        
+        <!-- Echo all executed SQL to stdout -->
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+        
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+        
+        <!-- Default schema -->
+        <property name="hibernate.default_schema">_da_vtschool_2526</property>
+        
+        <!-- Disable the second-level cache  -->
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        
+        <!-- Current session context -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        
+        <!-- Mapped entities -->
+        <mapping class="com.vtschool.model.Student"/>
+        <mapping class="com.vtschool.model.Course"/>
+        <mapping class="com.vtschool.model.Subject"/>
+        <mapping class="com.vtschool.model.Enrollment"/>
+        <mapping class="com.vtschool.model.Score"/>
+    </session-factory>
+</hibernate-configuration>

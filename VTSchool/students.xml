@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <student>
+        <firstname>John</firstname>
+        <lastname>Doe</lastname>
+        <idcard>12345678</idcard>
+        <phone>666777888</phone>
+        <email>john.doe@email.com</email>
+    </student>
+    <student>
+        <firstname>Jane</firstname>
+        <lastname>Smith</lastname>
+        <idcard>87654321</idcard>
+        <phone>655443322</phone>
+        <email>jane.smith@email.com</email>
+    </student>
+    <student>
+        <firstname>Carlos</firstname>
+        <lastname>Rodriguez</lastname>
+        <idcard>11223344</idcard>
+        <phone></phone>
+        <email>carlos.rodriguez@email.com</email>
+    </student>
+    <student>
+        <firstname>Maria</firstname>
+        <lastname>Garcia</lastname>
+        <idcard>44332211</idcard>
+        <phone>611222333</phone>
+        <email></email>
+    </student>
+</students>
