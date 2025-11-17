@@ -41,6 +41,15 @@ public class Constants {
     
     // Success messages
     public static final String SUCCESS_STUDENTS_ADDED = "Students added successfully";
+    public static final String SUCCESS_STUDENT_ENROLLED = "Student enrolled successfully";
+    
+    // Enrollment errors
+    public static final String ERROR_STUDENT_NOT_FOUND = "Error: Student not found";
+    public static final String ERROR_COURSE_NOT_FOUND = "Error: Course not found";
+    public static final String ERROR_ALREADY_ENROLLED = "Error: Student already enrolled in this course for this year";
+    public static final String ERROR_COURSE_COMPLETED = "Error: Student has already completed this course";
+    public static final String ERROR_INVALID_YEAR = "Error: Invalid year";
+    public static final String ERROR_MISSING_ARGUMENTS = "Error: Missing required arguments";
     
     private Constants() {
         // Private constructor to prevent instantiation

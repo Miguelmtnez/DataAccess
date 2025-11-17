@@ -70,7 +70,7 @@ public class StudentDAO {
      */
     public Optional<Student> findByIdCard(String idCard) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Student student = session.get(Student.class, idCard);
+            Student student = session.find(Student.class, idCard);
             return Optional.ofNullable(student);
         } catch (Exception e) {
             logger.error("Error finding student by ID card: {}", e.getMessage());
@@ -141,7 +141,7 @@ public class StudentDAO {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Student student = session.get(Student.class, idCard);
+            Student student = session.find(Student.class, idCard);
             if (student != null) {
                 session.remove(student);
                 transaction.commit();

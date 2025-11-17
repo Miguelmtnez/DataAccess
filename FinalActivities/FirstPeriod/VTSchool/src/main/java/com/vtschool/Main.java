@@ -1,5 +1,6 @@
 package com.vtschool;
 
+import com.vtschool.service.EnrollmentService;
 import com.vtschool.service.StudentService;
 import com.vtschool.util.Constants;
 import com.vtschool.util.HibernateUtil;
@@ -116,11 +117,41 @@ public class Main {
     }
     
     /**
-     * Handles the --enroll option (to be implemented)
+     * Handles the --enroll option
      */
     private static void handleEnroll(String[] args) {
-        System.out.println("Enroll functionality - To be implemented for Nov 23, 2025");
-        // TODO: Implement enrollment functionality
+        if (args.length < 4) {
+            System.err.println("Error: Missing arguments");
+            System.err.println("Usage: java -jar vtschool.jar --enroll <idcard> <course_code> <year>");
+            System.exit(1);
+        }
+        
+        String idCard = args[1];
+        Integer courseCode;
+        Integer year;
+        
+        try {
+            courseCode = Integer.parseInt(args[2]);
+            year = Integer.parseInt(args[3]);
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Course code and year must be valid integers");
+            System.exit(1);
+            return;
+        }
+        
+        logger.info("Enrolling student {} in course {} for year {}", idCard, courseCode, year);
+        
+        EnrollmentService enrollmentService = new EnrollmentService();
+        EnrollmentService.ServiceResult result = enrollmentService.enrollStudent(idCard, courseCode, year);
+        
+        if (result.isSuccess()) {
+            System.out.println(result.getMessage());
+            logger.info("Student enrolled successfully");
+        } else {
+            System.err.println(result.getMessage());
+            logger.error("Failed to enroll student: {}", result.getMessage());
+            System.exit(1);
+        }
     }
     
     /**

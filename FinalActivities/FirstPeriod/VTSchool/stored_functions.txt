@@ -1,0 +1,120 @@
+-- ============================================================================
+-- STORED FUNCTIONS FOR VTSCHOOL PROJECT
+-- Academic Year: 2025-2026
+-- Author: MMR (Miguel Martinez Rosario)
+-- ============================================================================
+
+-- ============================================================================
+-- FUNCTION 1: Get Passed Subjects for a Student in a Course
+-- ============================================================================
+-- This function returns all subjects that a student has passed (score >= 5)
+-- in a specific course.
+--
+-- Parameters:
+--   p_student_idcard: Student's ID card (VARCHAR)
+--   p_course_code: Course code (INTEGER)
+--
+-- Returns: TABLE with subject codes (INTEGER)
+-- ============================================================================
+
+CREATE OR REPLACE FUNCTION subjects_passed_mmr_2526(
+    p_student_idcard VARCHAR(8),
+    p_course_code INTEGER
+)
+RETURNS TABLE(subject_code INTEGER) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT sc.subject_id
+    FROM _da_vtschool_2526.scores sc
+    INNER JOIN _da_vtschool_2526.enrollments e ON sc.enrollment_id = e.code
+    WHERE e.student = p_student_idcard
+      AND e.course = p_course_code
+      AND sc.score >= 5;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- ============================================================================
+-- FUNCTION 2: Get Pending (Failed) Subjects for a Student in a Course
+-- ============================================================================
+-- This function returns all subjects that a student has NOT yet passed
+-- in a specific course. This includes:
+-- - Subjects with score < 5
+-- - Subjects with NULL score
+-- - Subjects not yet taken (from year 1 or 2 depending on enrollment history)
+--
+-- Parameters:
+--   p_student_idcard: Student's ID card (VARCHAR)
+--   p_course_code: Course code (INTEGER)
+--
+-- Returns: TABLE with subject codes (INTEGER), subject names (VARCHAR), and year (INTEGER)
+-- ============================================================================
+
+CREATE OR REPLACE FUNCTION subjects_pending_mmr_2526(
+    p_student_idcard VARCHAR(8),
+    p_course_code INTEGER
+)
+RETURNS TABLE(subject_code INTEGER, subject_name VARCHAR(50), subject_year INTEGER) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT s.code, s.name, s.year
+    FROM _da_vtschool_2526.subjects s
+    INNER JOIN _da_vtschool_2526.subject_courses sc ON s.code = sc.subject_id
+    WHERE sc.course_id = p_course_code
+      AND s.code NOT IN (
+          -- Exclude subjects already passed
+          SELECT DISTINCT scr.subject_id
+          FROM _da_vtschool_2526.scores scr
+          INNER JOIN _da_vtschool_2526.enrollments e ON scr.enrollment_id = e.code
+          WHERE e.student = p_student_idcard
+            AND e.course = p_course_code
+            AND scr.score >= 5
+      )
+    ORDER BY s.year, s.code;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- ============================================================================
+-- USAGE EXAMPLES
+-- ============================================================================
+
+-- Example 1: Get passed subjects for student '12332001' in course 1 (DAM)
+-- SELECT * FROM subjects_passed_mmr_2526('12332001', 1);
+
+-- Example 2: Get pending subjects for student '12332001' in course 1 (DAM)
+-- SELECT * FROM subjects_pending_mmr_2526('12332001', 1);
+
+
+-- ============================================================================
+-- TESTING QUERIES
+-- ============================================================================
+
+-- Test 1: Count passed subjects for a student
+-- SELECT COUNT(*) as passed_subjects 
+-- FROM subjects_passed_mmr_2526('12332001', 1);
+
+-- Test 2: Count pending subjects for a student
+-- SELECT COUNT(*) as pending_subjects 
+-- FROM subjects_pending_mmr_2526('12332001', 1);
+
+-- Test 3: Check if student has completed course (no pending subjects)
+-- SELECT CASE 
+--     WHEN COUNT(*) = 0 THEN 'Course Completed'
+--     ELSE 'Course Incomplete'
+-- END as course_status
+-- FROM subjects_pending_mmr_2526('12332001', 1);
+
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- 1. Function names use initials 'mmr' (Miguel Martinez Rodriguez)
+-- 2. Both functions are MANDATORY for the project
+-- 3. The schema is set to _da_vtschool_2526
+-- 4. A subject is considered "passed" when score >= 5
+-- 5. A subject is "pending" when:
+--    - It has never been graded (NULL)
+--    - It has been graded but score < 5
+--    - It belongs to the course but hasn't been enrolled yet
+-- ============================================================================
