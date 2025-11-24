@@ -61,7 +61,10 @@ public class EnrollmentDAO {
      */
     public Optional<Enrollment> findByStudentCourseYear(String studentIdCard, Integer courseCode, Integer year) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Enrollment e WHERE e.student.idCard = :idCard " +
+            String hql = "FROM Enrollment e " +
+                        "LEFT JOIN FETCH e.student " +
+                        "LEFT JOIN FETCH e.course " +
+                        "WHERE e.student.idCard = :idCard " +
                         "AND e.course.code = :courseCode AND e.year = :year";
             
             Query<Enrollment> query = session.createQuery(hql, Enrollment.class);

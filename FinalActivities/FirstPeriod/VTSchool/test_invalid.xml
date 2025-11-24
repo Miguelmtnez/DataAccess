@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <student>
+        <idCard>12345678</idCard>
+        <firstName>Test</firstName>
+        <lastName>Invalid</lastName>
+        <phone>abc123</phone>
+        <email>invalidemail</email>
+    </student>
+    <student>
+        <idCard>87654321</idCard>
+        <firstName>Test2</firstName>
+        <lastName>Invalid2</lastName>
+        <phone>123456789012345</phone>
+        <email>test@</email>
+    </student>
+</students>

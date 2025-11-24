@@ -69,7 +69,9 @@ public class ScoreDAO {
      */
     public List<Score> findByEnrollmentId(Integer enrollmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Score s WHERE s.enrollment.code = :enrollmentId";
+            String hql = "FROM Score s " +
+                        "LEFT JOIN FETCH s.subject " +
+                        "WHERE s.enrollment.code = :enrollmentId";
             Query<Score> query = session.createQuery(hql, Score.class);
             query.setParameter("enrollmentId", enrollmentId);
             return query.getResultList();
@@ -98,6 +100,25 @@ public class ScoreDAO {
             }
             logger.error("Error updating score: {}", e.getMessage());
             return false;
+        }
+    }
+    
+    /**
+     * Gets all scores with NULL values for a specific enrollment
+     * @param enrollmentId The enrollment ID
+     * @return List of scores with NULL values
+     */
+    public List<Score> findPendingScoresByEnrollmentId(Integer enrollmentId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "FROM Score s " +
+                        "LEFT JOIN FETCH s.subject " +
+                        "WHERE s.enrollment.code = :enrollmentId AND s.score IS NULL";
+            Query<Score> query = session.createQuery(hql, Score.class);
+            query.setParameter("enrollmentId", enrollmentId);
+            return query.getResultList();
+        } catch (Exception e) {
+            logger.error("Error finding pending scores by enrollment: {}", e.getMessage());
+            return List.of();
         }
     }
 }

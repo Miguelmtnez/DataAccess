@@ -1,6 +1,7 @@
 package com.vtschool;
 
 import com.vtschool.service.EnrollmentService;
+import com.vtschool.service.QualificationService;
 import com.vtschool.service.StudentService;
 import com.vtschool.util.Constants;
 import com.vtschool.util.HibernateUtil;
@@ -155,18 +156,75 @@ public class Main {
     }
     
     /**
-     * Handles the --qualify option (to be implemented)
+     * Handles the --qualify option
      */
     private static void handleQualify(String[] args) {
-        System.out.println("Qualify functionality - To be implemented for Nov 30, 2025");
-        // TODO: Implement qualification functionality
+        if (args.length < 4) {
+            System.err.println("Error: Missing arguments");
+            System.err.println("Usage: java -jar vtschool.jar --qualify <idcard> <course_code> <year>");
+            System.exit(1);
+        }
+        
+        String idCard = args[1];
+        Integer courseCode;
+        Integer year;
+        
+        try {
+            courseCode = Integer.parseInt(args[2]);
+            year = Integer.parseInt(args[3]);
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Course code and year must be valid integers");
+            System.exit(1);
+            return;
+        }
+        
+        logger.info("Entering scores for student {} in course {} for year {}", idCard, courseCode, year);
+        
+        QualificationService qualificationService = new QualificationService();
+        QualificationService.ServiceResult result = qualificationService.qualifyStudent(idCard, courseCode, year);
+        
+        if (result.isSuccess()) {
+            System.out.println(result.getMessage());
+            logger.info("Qualification completed successfully");
+        } else {
+            System.err.println(result.getMessage());
+            logger.error("Failed to qualify student: {}", result.getMessage());
+            System.exit(1);
+        }
     }
     
     /**
-     * Handles the --print option (to be implemented)
+     * Handles the --print option
      */
     private static void handlePrint(String[] args) {
-        System.out.println("Print functionality - To be implemented for Nov 30, 2025");
-        // TODO: Implement print functionality
+        if (args.length < 4) {
+            System.err.println("Error: Missing arguments");
+            System.err.println("Usage: java -jar vtschool.jar --print <idcard> <course_code> <year>");
+            System.exit(1);
+        }
+        
+        String idCard = args[1];
+        Integer courseCode;
+        Integer year;
+        
+        try {
+            courseCode = Integer.parseInt(args[2]);
+            year = Integer.parseInt(args[3]);
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Course code and year must be valid integers");
+            System.exit(1);
+            return;
+        }
+        
+        logger.info("Printing transcript for student {} in course {} for year {}", idCard, courseCode, year);
+        
+        QualificationService qualificationService = new QualificationService();
+        QualificationService.ServiceResult result = qualificationService.printTranscript(idCard, courseCode, year);
+        
+        if (!result.isSuccess()) {
+            System.err.println(result.getMessage());
+            logger.error("Failed to print transcript: {}", result.getMessage());
+            System.exit(1);
+        }
     }
 }
