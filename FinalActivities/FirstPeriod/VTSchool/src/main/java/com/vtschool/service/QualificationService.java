@@ -50,21 +50,20 @@ public class QualificationService {
      * Enters scores for a student's enrollment interactively
      * @param idCard Student ID card
      * @param courseCode Course code
-     * @param year Enrollment year
      * @return ServiceResult with success status and message
      */
-    public ServiceResult qualifyStudent(String idCard, Integer courseCode, Integer year) {
+    public ServiceResult qualifyStudent(String idCard, Integer courseCode) {
         // Validate student exists
         Student student = studentDAO.findByIdCard(idCard).orElse(null);
         if (student == null) {
             return new ServiceResult(false, "Error: Student with ID card '" + idCard + "' not found");
         }
         
-        // Find enrollment
-        Enrollment enrollment = enrollmentDAO.findByStudentCourseYear(idCard, courseCode, year).orElse(null);
+        // Find most recent enrollment for this student and course
+        Enrollment enrollment = enrollmentDAO.findByStudentAndCourse(idCard, courseCode).orElse(null);
         if (enrollment == null) {
             return new ServiceResult(false, 
-                "Error: No enrollment found for student " + idCard + " in course " + courseCode + " for year " + year);
+                "Error: No enrollment found for student " + idCard + " in course " + courseCode);
         }
         
         // Get pending scores (scores with NULL values)
@@ -78,19 +77,19 @@ public class QualificationService {
         logger.info("Found {} pending scores for enrollment {}", pendingScores.size(), enrollment.getCode());
         
         // Interactive score entry
-        Scanner scanner = new Scanner(System.in);
         int updatedCount = 0;
         int skippedCount = 0;
         
         System.out.println("\nEntering scores for student: " + student.getFirstName() + " " + student.getLastName());
-        System.out.println("Course: " + enrollment.getCourse().getName() + " (" + year + ")");
+        System.out.println("Course: " + enrollment.getCourse().getName() + " (" + enrollment.getYear() + ")");
         System.out.println("Enter score (0-10) or 99 to skip:\n");
         
-        for (Score score : pendingScores) {
-            System.out.print(score.getSubject().getName() + ": ");
-            
-            try {
-                String input = scanner.nextLine().trim();
+        try (Scanner scanner = new Scanner(System.in)) {
+            for (Score score : pendingScores) {
+                System.out.print(score.getSubject().getName() + ": ");
+                
+                try {
+                    String input = scanner.nextLine().trim();
                 
                 if (input.isEmpty()) {
                     System.out.println("  Skipped (empty input)");
@@ -121,9 +120,10 @@ public class QualificationService {
                     skippedCount++;
                 }
                 
-            } catch (NumberFormatException e) {
-                System.out.println("  Error: Invalid number format. Skipped.");
-                skippedCount++;
+                } catch (NumberFormatException e) {
+                    System.out.println("  Error: Invalid number format. Skipped.");
+                    skippedCount++;
+                }
             }
         }
         
@@ -138,21 +138,20 @@ public class QualificationService {
      * Prints the student's transcript for a specific enrollment
      * @param idCard Student ID card
      * @param courseCode Course code
-     * @param year Enrollment year
      * @return ServiceResult with success status and message
      */
-    public ServiceResult printTranscript(String idCard, Integer courseCode, Integer year) {
+    public ServiceResult printTranscript(String idCard, Integer courseCode) {
         // Validate student exists
         Student student = studentDAO.findByIdCard(idCard).orElse(null);
         if (student == null) {
             return new ServiceResult(false, "Error: Student with ID card '" + idCard + "' not found");
         }
         
-        // Find enrollment
-        Enrollment enrollment = enrollmentDAO.findByStudentCourseYear(idCard, courseCode, year).orElse(null);
+        // Find most recent enrollment for this student and course
+        Enrollment enrollment = enrollmentDAO.findByStudentAndCourse(idCard, courseCode).orElse(null);
         if (enrollment == null) {
             return new ServiceResult(false, 
-                "Error: No enrollment found for student " + idCard + " in course " + courseCode + " for year " + year);
+                "Error: No enrollment found for student " + idCard + " in course " + courseCode);
         }
         
         // Get all scores for this enrollment
@@ -170,7 +169,7 @@ public class QualificationService {
         System.out.println("Student: " + student.getFirstName() + " " + student.getLastName());
         System.out.println("ID Card: " + student.getIdCard());
         System.out.println("Course: " + enrollment.getCourse().getName());
-        System.out.println("Year: " + year);
+        System.out.println("Year: " + enrollment.getYear());
         System.out.println("=".repeat(70));
         System.out.println();
         System.out.printf("%-40s %10s %10s%n", "SUBJECT", "YEAR", "SCORE");
@@ -215,7 +214,7 @@ public class QualificationService {
         System.out.println("=".repeat(70));
         System.out.println();
         
-        logger.info("Transcript printed for student {} in course {} for year {}", idCard, courseCode, year);
+        logger.info("Transcript printed for student {} in course {}", idCard, courseCode);
         return new ServiceResult(true, "Transcript printed successfully");
     }
 }

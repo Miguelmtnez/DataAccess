@@ -80,24 +80,29 @@ public class EnrollmentDAO {
     }
     
     /**
-     * Gets all enrollments for a student in a specific course
+     * Gets the most recent enrollment for a student in a specific course
      * @param studentIdCard Student ID card
      * @param courseCode Course code
-     * @return List of enrollments
+     * @return Optional containing the most recent enrollment if found
      */
-    public List<Enrollment> findByStudentAndCourse(String studentIdCard, Integer courseCode) {
+    public Optional<Enrollment> findByStudentAndCourse(String studentIdCard, Integer courseCode) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Enrollment e WHERE e.student.idCard = :idCard " +
-                        "AND e.course.code = :courseCode ORDER BY e.year";
+            String hql = "FROM Enrollment e " +
+                        "LEFT JOIN FETCH e.student " +
+                        "LEFT JOIN FETCH e.course " +
+                        "WHERE e.student.idCard = :idCard " +
+                        "AND e.course.code = :courseCode " +
+                        "ORDER BY e.year DESC";
             
             Query<Enrollment> query = session.createQuery(hql, Enrollment.class);
             query.setParameter("idCard", studentIdCard);
             query.setParameter("courseCode", courseCode);
+            query.setMaxResults(1);
             
-            return query.getResultList();
+            return query.uniqueResultOptional();
         } catch (Exception e) {
-            logger.error("Error finding enrollments by student and course: {}", e.getMessage());
-            return List.of();
+            logger.error("Error finding enrollment by student and course: {}", e.getMessage());
+            return Optional.empty();
         }
     }
     

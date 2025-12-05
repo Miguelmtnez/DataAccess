@@ -8,11 +8,23 @@ import com.vtschool.util.HibernateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+import java.util.logging.LogManager;
+
 public class Main {
     
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     
     public static void main(String[] args) {
+        try {
+            InputStream stream = Main.class.getClassLoader().getResourceAsStream("logging.properties");
+            if (stream != null) {
+                LogManager.getLogManager().readConfiguration(stream);
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+        
         try {
             // If no arguments provided, show help
             if (args.length == 0) {
@@ -76,18 +88,18 @@ public class Main {
         System.out.println("Options:");
         System.out.println("  -h, --help              Show this help message");
         System.out.println("  -a, --add <file.xml>    Add students from XML file");
-        System.out.println("  -e, --enroll <idcard> <course_code> <year>");
+        System.out.println("  -e, --enroll <idcard> <course_code>");
         System.out.println("                          Enroll a student in a course");
-        System.out.println("  -q, --qualify <idcard> <course_code> <year>");
+        System.out.println("  -q, --qualify <idcard> <course_code>");
         System.out.println("                          Enter scores for a student");
-        System.out.println("  -p, --print <idcard> <course_code> <year>");
+        System.out.println("  -p, --print <idcard> <course_code>");
         System.out.println("                          Print student results");
         System.out.println();
         System.out.println("Examples:");
         System.out.println("  java -jar vtschool.jar --add students.xml");
-        System.out.println("  java -jar vtschool.jar --enroll 12332001 1 2023");
-        System.out.println("  java -jar vtschool.jar --qualify 12332001 1 2023");
-        System.out.println("  java -jar vtschool.jar --print 12332001 1 2023");
+        System.out.println("  java -jar vtschool.jar --enroll 12332001 1");
+        System.out.println("  java -jar vtschool.jar --qualify 12332001 1");
+        System.out.println("  java -jar vtschool.jar --print 12332001 1");
         System.out.println();
     }
     
@@ -121,26 +133,32 @@ public class Main {
      * Handles the --enroll option
      */
     private static void handleEnroll(String[] args) {
-        if (args.length < 4) {
+        if (args.length < 3) {
             System.err.println("Error: Missing arguments");
-            System.err.println("Usage: java -jar vtschool.jar --enroll <idcard> <course_code> <year>");
+            System.err.println("Usage: java -jar vtschool.jar --enroll <idcard> <course_code>");
             System.exit(1);
         }
         
         String idCard = args[1];
         Integer courseCode;
-        Integer year;
         
         try {
             courseCode = Integer.parseInt(args[2]);
-            year = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            System.err.println("Error: Course code and year must be valid integers");
+            System.err.println("Error: Course code must be a valid integer");
             System.exit(1);
             return;
         }
         
-        logger.info("Enrolling student {} in course {} for year {}", idCard, courseCode, year);
+        // Calculate academic year (September to August)
+        // If current month is September-December, academic year = current year
+        // If current month is January-August, academic year = current year - 1
+        java.time.LocalDate now = java.time.LocalDate.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+        int year = (currentMonth >= 9) ? currentYear : currentYear - 1;
+        
+        logger.info("Enrolling student {} in course {} for academic year {}", idCard, courseCode, year);
         
         EnrollmentService enrollmentService = new EnrollmentService();
         EnrollmentService.ServiceResult result = enrollmentService.enrollStudent(idCard, courseCode, year);
@@ -159,29 +177,27 @@ public class Main {
      * Handles the --qualify option
      */
     private static void handleQualify(String[] args) {
-        if (args.length < 4) {
+        if (args.length < 3) {
             System.err.println("Error: Missing arguments");
-            System.err.println("Usage: java -jar vtschool.jar --qualify <idcard> <course_code> <year>");
+            System.err.println("Usage: java -jar vtschool.jar --qualify <idcard> <course_code>");
             System.exit(1);
         }
         
         String idCard = args[1];
         Integer courseCode;
-        Integer year;
         
         try {
             courseCode = Integer.parseInt(args[2]);
-            year = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            System.err.println("Error: Course code and year must be valid integers");
+            System.err.println("Error: Course code must be a valid integer");
             System.exit(1);
             return;
         }
         
-        logger.info("Entering scores for student {} in course {} for year {}", idCard, courseCode, year);
+        logger.info("Entering scores for student {} in course {}", idCard, courseCode);
         
         QualificationService qualificationService = new QualificationService();
-        QualificationService.ServiceResult result = qualificationService.qualifyStudent(idCard, courseCode, year);
+        QualificationService.ServiceResult result = qualificationService.qualifyStudent(idCard, courseCode);
         
         if (result.isSuccess()) {
             System.out.println(result.getMessage());
@@ -197,29 +213,27 @@ public class Main {
      * Handles the --print option
      */
     private static void handlePrint(String[] args) {
-        if (args.length < 4) {
+        if (args.length < 3) {
             System.err.println("Error: Missing arguments");
-            System.err.println("Usage: java -jar vtschool.jar --print <idcard> <course_code> <year>");
+            System.err.println("Usage: java -jar vtschool.jar --print <idcard> <course_code>");
             System.exit(1);
         }
         
         String idCard = args[1];
         Integer courseCode;
-        Integer year;
         
         try {
             courseCode = Integer.parseInt(args[2]);
-            year = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            System.err.println("Error: Course code and year must be valid integers");
+            System.err.println("Error: Course code must be a valid integer");
             System.exit(1);
             return;
         }
         
-        logger.info("Printing transcript for student {} in course {} for year {}", idCard, courseCode, year);
+        logger.info("Printing transcript for student {} in course {}", idCard, courseCode);
         
         QualificationService qualificationService = new QualificationService();
-        QualificationService.ServiceResult result = qualificationService.printTranscript(idCard, courseCode, year);
+        QualificationService.ServiceResult result = qualificationService.printTranscript(idCard, courseCode);
         
         if (!result.isSuccess()) {
             System.err.println(result.getMessage());

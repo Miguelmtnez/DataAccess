@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <student>
+        <firstname>Antonio</firstname>
+        <lastname>Perez</lastname>
+        <idcard>99998888</idcard>
+        <phone>600111222</phone>
+        <email>antonio@test.com</email>
+    </student>
+</students>

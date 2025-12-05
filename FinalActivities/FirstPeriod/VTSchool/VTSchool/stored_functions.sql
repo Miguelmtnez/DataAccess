@@ -1,7 +1,5 @@
--- Set search path
 SET search_path TO _da_vtschool_2526;
 
--- Function to get passed subjects for a student (score >= 5)
 CREATE OR REPLACE FUNCTION subjects_passed_mmr_2526(student_id_card VARCHAR)
 RETURNS TABLE (
     subject_id INTEGER,
@@ -25,7 +23,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to get pending subjects for a student (not passed or not enrolled)
 CREATE OR REPLACE FUNCTION subjects_pending_mmr_2526(student_id_card VARCHAR)
 RETURNS TABLE (
     subject_id INTEGER,

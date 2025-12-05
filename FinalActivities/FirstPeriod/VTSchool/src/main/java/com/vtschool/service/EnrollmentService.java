@@ -67,14 +67,14 @@ public class EnrollmentService {
                         "Error: Student has already completed this course and cannot enroll again");
             }
             
-            // Get previous enrollments for this student in this course
-            List<Enrollment> previousEnrollments = 
-                    enrollmentDAO.findByStudentAndCourse(studentIdCard, courseCode);
+            // Check if student has previous enrollments for this student in this course
+            boolean hasPreviousEnrollment = 
+                    enrollmentDAO.findByStudentAndCourse(studentIdCard, courseCode).isPresent();
             
             // Determine which subjects to enroll
             List<Subject> subjectsToEnroll;
             
-            if (previousEnrollments.isEmpty()) {
+            if (!hasPreviousEnrollment) {
                 // First time enrolling in this course - add all year 1 subjects
                 subjectsToEnroll = courseDAO.getSubjectsForCourseAndYear(courseCode, 1);
                 logger.info("First enrollment for student {} in course {}: {} year 1 subjects", 
