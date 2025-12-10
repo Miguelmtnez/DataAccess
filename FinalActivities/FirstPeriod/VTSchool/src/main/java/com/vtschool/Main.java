@@ -58,9 +58,17 @@ public class Main {
                     
                 case Constants.OPTION_PRINT_SHORT:
                 case Constants.OPTION_PRINT_LONG:
+                case Constants.OPTION_PRINTFILE_SHORT:
+                case Constants.OPTION_PRINTFILE_LONG:
                     handlePrint(args);
                     break;
-                    
+
+                case Constants.OPTION_CLOSE_SHORT:
+                case Constants.OPTION_CLOSE_LONG:
+                case Constants.OPTION_CLOSEFORCE_SHORT:
+                case Constants.OPTION_CLOSEFORCE_LONG:
+                    handleClose(args);
+                    break;
                 default:
                     System.err.println("Error: Unknown option '" + option + "'");
                     System.err.println("Use -h or --help for usage information");
@@ -77,7 +85,9 @@ public class Main {
         }
     }
     
-
+    /**
+     * Displays help information
+     */
     private static void showHelp() {
         System.out.println("VTSchool - Vocational Training School Management System");
         System.out.println();
@@ -90,8 +100,11 @@ public class Main {
         System.out.println("                          Enroll a student in a course");
         System.out.println("  -q, --qualify <idcard> <course_code>");
         System.out.println("                          Enter scores for a student");
-        System.out.println("  -p, --print <idcard> <course_code>");
-        System.out.println("                          Print student results");
+        System.out.println("  -p, --print <idcard> <course_code> [-f / --file]");
+        System.out.println("                          Print student results and with --file print in the xml");
+        System.out.println("  -c, --close [-f/ --force]");
+        System.out.println("                          Close the year academic in July, August and September ");
+        System.out.println("                          and --force close the year academic in all moments ");
         System.out.println();
         System.out.println("Examples:");
         System.out.println("  java -jar vtschool.jar --add students.xml");
@@ -101,6 +114,9 @@ public class Main {
         System.out.println();
     }
 
+    /**
+     * Handles the --add option to add students from XML
+     */
     private static void handleAddStudents(String[] args) {
         if (args.length < 2) {
             System.err.println("Error: Missing XML file argument");
@@ -124,6 +140,9 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the --enroll option
+     */
     private static void handleEnroll(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");
@@ -165,6 +184,9 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the --qualify option
+     */
     private static void handleQualify(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");
@@ -198,10 +220,13 @@ public class Main {
         }
     }
 
+    /**
+     * Handles the --print option
+     */
     private static void handlePrint(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");
-            System.err.println("Usage: java -jar vtschool.jar --print <idcard> <course_code>");
+            System.err.println("Usage: java -jar vtschool.jar --print <idcard> <course_code> [-f/ --file]");
             System.exit(1);
         }
         
@@ -226,5 +251,14 @@ public class Main {
             logger.error("Failed to print transcript: {}", result.getMessage());
             System.exit(1);
         }
+    }
+
+    private static void handleClose(String[] args) {
+        if (args.length < 3) {
+            System.err.println("Error: Missing arguments");
+            System.err.println("Usage: java -jar vtschool.jar --close");
+            System.exit(1);
+        }
+
     }
 }

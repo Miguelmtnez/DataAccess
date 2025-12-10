@@ -13,6 +13,12 @@ public class Constants {
     public static final String OPTION_QUALIFY_LONG = "--qualify";
     public static final String OPTION_PRINT_SHORT = "-p";
     public static final String OPTION_PRINT_LONG = "--print";
+    public static final String OPTION_PRINTFILE_SHORT = "-f ";
+    public static final String OPTION_PRINTFILE_LONG = "--file";
+    public static final String OPTION_CLOSE_SHORT = "-c";
+    public static final String OPTION_CLOSE_LONG = "--close";
+    public static final String OPTION_CLOSEFORCE_SHORT = "-f";
+    public static final String OPTION_CLOSEFORCE_LONG = "--force";
     
     // Validation
     public static final int MIN_SCORE = 0;
