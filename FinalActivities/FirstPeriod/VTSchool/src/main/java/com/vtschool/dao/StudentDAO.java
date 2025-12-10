@@ -62,7 +62,7 @@ public class StudentDAO {
             return false;
         }
     }
-    
+
     /**
      * Finds a student by ID card
      * @param idCard The ID card to search for
@@ -77,12 +77,8 @@ public class StudentDAO {
             return Optional.empty();
         }
     }
-    
-    /**
-     * Checks if a student exists by ID card
-     * @param idCard The ID card to check
-     * @return true if student exists, false otherwise
-     */
+
+
     public boolean existsByIdCard(String idCard) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(

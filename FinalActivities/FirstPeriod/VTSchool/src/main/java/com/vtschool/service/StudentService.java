@@ -22,12 +22,7 @@ public class StudentService {
         this.validationService = new ValidationService();
     }
     
-    /**
-     * Adds students from an XML file to the database
-     * All students are added in a single transaction (all or nothing)
-     * @param xmlFilePath Path to the XML file
-     * @return ServiceResult indicating success or failure
-     */
+
     public ServiceResult addStudentsFromXML(String xmlFilePath) {
         try {
             // Parse students from XML
@@ -79,10 +74,7 @@ public class StudentService {
             return new ServiceResult(false, "Error: " + e.getMessage());
         }
     }
-    
-    /**
-     * Inner class to hold service operation results
-     */
+
     public static class ServiceResult {
         private final boolean success;
         private final String message;

@@ -77,9 +77,7 @@ public class Main {
         }
     }
     
-    /**
-     * Displays help information
-     */
+
     private static void showHelp() {
         System.out.println("VTSchool - Vocational Training School Management System");
         System.out.println();
@@ -102,10 +100,7 @@ public class Main {
         System.out.println("  java -jar vtschool.jar --print 12332001 1");
         System.out.println();
     }
-    
-    /**
-     * Handles the --add option to add students from XML
-     */
+
     private static void handleAddStudents(String[] args) {
         if (args.length < 2) {
             System.err.println("Error: Missing XML file argument");
@@ -128,10 +123,7 @@ public class Main {
             System.exit(1);
         }
     }
-    
-    /**
-     * Handles the --enroll option
-     */
+
     private static void handleEnroll(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");
@@ -172,10 +164,7 @@ public class Main {
             System.exit(1);
         }
     }
-    
-    /**
-     * Handles the --qualify option
-     */
+
     private static void handleQualify(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");
@@ -208,10 +197,7 @@ public class Main {
             System.exit(1);
         }
     }
-    
-    /**
-     * Handles the --print option
-     */
+
     private static void handlePrint(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Missing arguments");

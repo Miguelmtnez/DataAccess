@@ -1,6 +1,8 @@
 package com.vtschool.model;
 
 import jakarta.persistence.*;
+
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,11 +21,14 @@ public class Student {
     @Column(name = "lastname", length = 100, nullable = false)
     private String lastName;
     
-    @Column(name = "phone", length = 12)
+    @Column(name = "phone", length = 12, nullable = false)
     private String phone;
     
     @Column(name = "email", length = 100)
     private String email;
+
+    @Column(name = "birthdate", length = 100)
+    private Date birthdate;
     
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
@@ -37,12 +42,13 @@ public class Student {
         this.lastName = lastName;
     }
     
-    public Student(String idCard, String firstName, String lastName, String phone, String email) {
+    public Student(String idCard, String firstName, String lastName, String phone, String email, Date birthdate) {
         this.idCard = idCard;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
+        this.birthdate = birthdate;
     }
     
     // Getters and Setters
@@ -85,6 +91,14 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
     
     public List<Enrollment> getEnrollments() {
         return enrollments;
@@ -115,6 +129,7 @@ public class Student {
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
+                ", birthdate='" + birthdate + '\'' +
                 '}';
     }
 }

@@ -2,6 +2,8 @@ package com.vtschool.xml;
 
 import jakarta.xml.bind.annotation.*;
 
+import java.sql.Date;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StudentXML {
     
@@ -19,6 +21,9 @@ public class StudentXML {
     
     @XmlElement(name = "email")
     private String email;
+
+    @XmlElement(name = "birthdate")
+    private Date birthdate;
     
     public StudentXML() {
     }
@@ -62,7 +67,15 @@ public class StudentXML {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
     @Override
     public String toString() {
         return "StudentXML{" +
@@ -71,6 +84,7 @@ public class StudentXML {
                 ", idCard='" + idCard + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
+                ", birthdate='" + birthdate + '\'' +
                 '}';
     }
 }
