@@ -1,0 +1,260 @@
+--
+-- Base de datos de vuelos (flights2627)
+-- Script de creación para PostgreSQL, sin esquema asociado
+-- (se crea en el esquema por defecto del search_path).
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+--
+-- Tablas
+--
+
+CREATE TABLE airlines (
+    airlineid serial NOT NULL,
+    name character varying(50) NOT NULL,
+    shortcode character varying(3)
+);
+
+CREATE TABLE cities (
+    code serial NOT NULL,
+    name character varying(15) NOT NULL,
+    state character varying(15) NOT NULL,
+    country character varying(30) NOT NULL
+);
+
+CREATE TABLE airports (
+    code serial NOT NULL,
+    iata character varying(3) NOT NULL,
+    name character varying(100) NOT NULL,
+    city integer NOT NULL
+);
+
+CREATE TABLE planes (
+    plane_id serial NOT NULL,
+    brand character varying(30) NOT NULL,
+    model character varying(30) NOT NULL,
+    range_km integer NOT NULL CHECK (range_km >= 0),
+    total_seats integer NOT NULL CHECK (total_seats >= 0)
+);
+
+CREATE TABLE flights (
+    flight_code character varying(10) NOT NULL,
+    source integer NOT NULL,
+    destination integer NOT NULL,
+    arrival time without time zone NOT NULL,
+    departure time without time zone NOT NULL,
+    duration integer NOT NULL CHECK (duration >= 0),
+    airlineid integer NOT NULL,
+    distance integer NOT NULL,
+    plane integer NOT NULL
+);
+
+CREATE TABLE passengers (
+    passportno character varying(10) NOT NULL,
+    firstname character varying(20) NOT NULL,
+    lastname character varying(20) NOT NULL,
+    address character varying(100),
+    phone character varying(12)
+);
+
+CREATE TABLE tickets (
+    ticket_number integer NOT NULL,
+    date_of_booking date NOT NULL,
+    date_of_travel date NOT NULL,
+    date_of_cancellation date,
+    passportno character varying(10) NOT NULL,
+    flight_code character varying(10) NOT NULL,
+    price real CHECK (price >= 0)
+);
+
+CREATE SEQUENCE ticket1_ticket_number_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE ticket1_ticket_number_seq OWNED BY tickets.ticket_number;
+
+ALTER TABLE ONLY tickets ALTER COLUMN ticket_number SET DEFAULT nextval('ticket1_ticket_number_seq'::regclass);
+
+--
+-- Datos
+--
+
+-- airlines
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (1, 'American Airlines', '001');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (2, 'Air India Limited', '098');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (3, 'Lufthansa', '220');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (4, 'British Airways', '125');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (5, 'Qatar Airways', '157');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (6, 'Jet Airways', '589');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (7, 'Emirates', '176');
+INSERT INTO airlines (airlineid, name, shortcode) VALUES (8, 'Ethiad Airways', '607');
+
+-- cities
+INSERT INTO cities (code, name, state, country) VALUES (1, 'Louisville', 'Kentucky', 'United States');
+INSERT INTO cities (code, name, state, country) VALUES (2, 'Chandigarh', 'Chandigarh', 'India');
+INSERT INTO cities (code, name, state, country) VALUES (3, 'Fort Worth', 'Texas', 'United States');
+INSERT INTO cities (code, name, state, country) VALUES (4, 'Delhi', 'Delhi', 'India');
+INSERT INTO cities (code, name, state, country) VALUES (5, 'Mumbai', 'Maharashtra', 'India');
+INSERT INTO cities (code, name, state, country) VALUES (6, 'San Francisco', 'California', 'United States');
+INSERT INTO cities (code, name, state, country) VALUES (7, 'Frankfurt', 'Hesse', 'Germany');
+INSERT INTO cities (code, name, state, country) VALUES (8, 'Houston', 'Texas', 'United States');
+INSERT INTO cities (code, name, state, country) VALUES (9, 'New York City', 'New York', 'United States');
+INSERT INTO cities (code, name, state, country) VALUES (10, 'Tampa', 'Florida', 'United States');
+
+-- airports
+INSERT INTO airports (code, iata, name, city) VALUES (1, 'SFW', 'Louisville International Airport', 1);
+INSERT INTO airports (code, iata, name, city) VALUES (2, 'IXC', 'Chandigarh International Airport', 2);
+INSERT INTO airports (code, iata, name, city) VALUES (3, 'DFW', 'Dallas/Fort Worth International Airport', 3);
+INSERT INTO airports (code, iata, name, city) VALUES (4, 'DEL', 'Indira GandhiInternational Airport', 4);
+INSERT INTO airports (code, iata, name, city) VALUES (5, 'BOM', 'Chhatrapati Shivaji International Airport', 5);
+INSERT INTO airports (code, iata, name, city) VALUES (6, 'SFO', 'San Francisco International Airport', 6);
+INSERT INTO airports (code, iata, name, city) VALUES (7, 'FRA', 'Frankfurt Airport', 7);
+INSERT INTO airports (code, iata, name, city) VALUES (8, 'IAH', 'George Bush Intercontinental Airport', 8);
+INSERT INTO airports (code, iata, name, city) VALUES (9, 'JFK', 'John F. Kennedy International Airport', 9);
+INSERT INTO airports (code, iata, name, city) VALUES (10, 'TPA', 'Tampa International Airport', 10);
+
+-- planes
+INSERT INTO planes (plane_id, brand, model, range_km, total_seats) VALUES (1, 'Boreal Aircraft', 'B-120', 2000, 90);
+INSERT INTO planes (plane_id, brand, model, range_km, total_seats) VALUES (2, 'Aeronova', 'N-320', 6500, 180);
+INSERT INTO planes (plane_id, brand, model, range_km, total_seats) VALUES (3, 'Aeronova', 'N-540', 9800, 240);
+INSERT INTO planes (plane_id, brand, model, range_km, total_seats) VALUES (4, 'Cielo Aerospace', 'C-780', 13800, 300);
+INSERT INTO planes (plane_id, brand, model, range_km, total_seats) VALUES (5, 'Cielo Aerospace', 'C-900 Titan', 15200, 380);
+
+-- flights
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('QR2305', 5, 3, '19:10', '13:55', 1005, 5, 14135, 5);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('EY1234', 9, 10, '22:25', '20:05', 140, 8, 1620, 1);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('BA3056', 5, 3, '08:10', '02:55', 1005, 4, 14135, 5);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('QR1902', 1, 8, '23:45', '22:50', 115, 5, 1268, 1);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('AI2014', 5, 3, '08:30', '03:15', 1005, 2, 14135, 5);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('LH9876', 9, 5, '08:00', '06:35', 895, 3, 12532, 4);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('9W2334', 8, 4, '17:15', '13:45', 960, 6, 13456, 4);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('EK3456', 5, 6, '22:10', '19:40', 960, 7, 13510, 4);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('AA4367', 6, 7, '14:55', '18:55', 660, 1, 9148, 3);
+INSERT INTO flights (flight_code, source, destination, arrival, departure, duration, airlineid, distance, plane) VALUES ('BA1689', 7, 4, '22:55', '10:55', 450, 4, 6122, 2);
+
+-- passengers
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('A1122334', 'MANAN', 'LAKHANI', '5589 CHTHAM REFLECTIONS, APT 349 HOUSTON, TX', '900433512');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('A1234568', 'ALEN', 'SMITH', '2230 NORTHSIDE, APT 11, ALBANY, NY', '808036729');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('B8765430', 'LAKSHMI', 'SHARMA', '1110 FIR HILLS, APT 903, AKRON, OH', '766619050');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('B9876541', 'ANKITA', 'AHIR', '3456 VIKAS APTS, APT 102,DOMBIVLI, INDIA', '808036728');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('C2345698', 'KHYATI', 'MISHRA', '7820 MCCALLUM COURTS, APT 234, AKRON, OH', '808226728');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('D1002004', 'ANKITA', 'PATIL', '7720 MCCALLUM BLVD, APT 1082, DALLAS, TX', '908036726');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('E3277889', 'John', 'GATES', '1234 BAKER APTS, APT 59, HESSE, GERMANY', '972456998');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('J9801235', 'AKHILESH', 'JOSHI', '345 CHATHAM COURTS, APT 678, MUMBAI, INDIA', '908036929');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('K3212322', 'SARA', 'GOMES', '6785 SPLITSVILLA, APT 34, MIAMI, FL', '902456922');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('P3452390', 'ALIA', 'BHAT', '548 MARKET PLACE, SAN Francisco, CA', '973456780');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('Q1243567', 'KARAN', 'MOTANI', '4444 FRANKFORD VILLA, APT 77, GUILDERLAND, NY', '972762664');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('R8990566', 'RIA', 'GUPTA', '3355 PALENCIA, APT 2065, MUMBAI, INDIA', '472451234');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('S1243269', 'ROM', 'SOLANKI', '7720 MCCALLUM BLVD, APT 2087, DALLAS, TX', '900456890');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('W7543336', 'JOHN', 'SMITH', '6666 ROCK HILL, APT 2902, TAMPA, FL', '462456998');
+INSERT INTO passengers (passportno, firstname, lastname, address, phone) VALUES ('X9324666', 'TEJASHREE', 'PANDIT', '9082 ESTAES OF RICHARDSON, RICHARDSON, TX', '900436012');
+
+-- tickets
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (1, '2016-05-11', '2016-12-15', NULL, 'A1234568', 'AI2014', 95000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (2, '2016-06-11', '2016-12-20', '2016-12-10', 'B9876541', 'LH9876', 100000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (3, '2016-08-21', '2016-12-25', NULL, 'C2345698', '9W2334', 200000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (4, '2016-08-10', '2017-01-12', NULL, 'D1002004', 'QR1902', 150000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (5, '2016-06-13', '2016-12-10', NULL, 'X9324666', 'EY1234', 98000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (6, '2016-11-11', '2017-02-12', NULL, 'B8765430', 'BA3056', 125000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (7, '2016-11-15', '2016-12-25', NULL, 'J9801235', '9W2334', 195000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (8, '2016-10-15', '2016-12-18', NULL, 'A1122334', 'AA4367', 170000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (9, '2016-11-12', '2016-12-30', NULL, 'Q1243567', 'QR1902', 140000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (10, '2016-01-22', '2016-12-15', NULL, 'S1243269', 'EK3456', 45000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (11, '2016-10-19', '2016-12-31', NULL, 'E3277889', 'BA1689', 100000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (12, '2016-11-20', '2017-01-12', NULL, 'K3212322', 'QR1902', 120000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (13, '2016-05-13', '2016-12-15', '2016-05-25', 'P3452390', 'AI2014', 65000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (14, '2016-06-26', '2016-12-23', NULL, 'W7543336', 'BA1689', 80000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (15, '2016-08-11', '2016-12-22', NULL, 'R8990566', 'QR2305', 98000.00);
+INSERT INTO tickets (ticket_number, date_of_booking, date_of_travel, date_of_cancellation, passportno, flight_code, price) VALUES (16, '2023-10-17', '2023-10-17', NULL, 'A1122334', 'BA1689', NULL);
+
+--
+-- Secuencias
+--
+
+SELECT pg_catalog.setval(pg_get_serial_sequence('airlines', 'airlineid'), 8, true);
+SELECT pg_catalog.setval(pg_get_serial_sequence('cities', 'code'), 10, true);
+SELECT pg_catalog.setval(pg_get_serial_sequence('airports', 'code'), 10, true);
+SELECT pg_catalog.setval(pg_get_serial_sequence('planes', 'plane_id'), 5, true);
+SELECT pg_catalog.setval('ticket1_ticket_number_seq', 16, true);
+
+--
+-- Claves primarias
+--
+
+ALTER TABLE ONLY airlines
+    ADD CONSTRAINT airline_pkey PRIMARY KEY (airlineid);
+
+ALTER TABLE ONLY airports
+    ADD CONSTRAINT airport_pkey PRIMARY KEY (code);
+
+ALTER TABLE ONLY cities
+    ADD CONSTRAINT city_pkey PRIMARY KEY (code);
+
+ALTER TABLE ONLY planes
+    ADD CONSTRAINT plane_pkey PRIMARY KEY (plane_id);
+
+ALTER TABLE ONLY flights
+    ADD CONSTRAINT flight_pkey PRIMARY KEY (flight_code);
+
+ALTER TABLE ONLY passengers
+    ADD CONSTRAINT passenger_pkey PRIMARY KEY (passportno);
+
+ALTER TABLE ONLY tickets
+    ADD CONSTRAINT tickets_pkey PRIMARY KEY (ticket_number);
+
+--
+-- Índices
+--
+
+CREATE INDEX fki_fk_dest ON flights USING btree (destination);
+
+CREATE INDEX fki_flight_code ON tickets USING btree (flight_code);
+
+CREATE INDEX fki_source ON flights USING btree (source);
+
+--
+-- Claves foráneas
+--
+
+ALTER TABLE ONLY airports
+    ADD CONSTRAINT airport_city_code_fkey FOREIGN KEY (city) REFERENCES cities(code) ON UPDATE CASCADE;
+
+ALTER TABLE ONLY flights
+    ADD CONSTRAINT fk_dest FOREIGN KEY (destination) REFERENCES airports(code) NOT VALID;
+
+ALTER TABLE ONLY flights
+    ADD CONSTRAINT fk_source FOREIGN KEY (source) REFERENCES airports(code) NOT VALID;
+
+ALTER TABLE ONLY flights
+    ADD CONSTRAINT flight_airlineid_fkey FOREIGN KEY (airlineid) REFERENCES airlines(airlineid) ON UPDATE CASCADE;
+
+ALTER TABLE ONLY flights
+    ADD CONSTRAINT flight_plane_fkey FOREIGN KEY (plane) REFERENCES planes(plane_id);
+
+ALTER TABLE ONLY tickets
+    ADD CONSTRAINT flight_code FOREIGN KEY (flight_code) REFERENCES flights(flight_code) NOT VALID;
+
+ALTER TABLE ONLY tickets
+    ADD CONSTRAINT ticket1_passportno_fkey FOREIGN KEY (passportno) REFERENCES passengers(passportno) ON UPDATE CASCADE;
+
+--
+-- Unique
+--
+
+ALTER TABLE ONLY airports
+    ADD CONSTRAINT airport_iata_unique UNIQUE(iata);

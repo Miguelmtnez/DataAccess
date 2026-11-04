@@ -1,0 +1,15 @@
+<!--  OK  -->
+<passengers>
+<passenger>
+<passportno>Y1234567</passportno>
+<firstname>Jose</firstname>
+<lastname>García</lastname>
+<address>666 Noname Road, The forgotten City, USA</address>
+<phone>616116611</phone>
+</passenger>
+<passenger>
+<passportno>Z7654321</passportno>
+<firstname>Antonio</firstname>
+<lastname>Luque</lastname>
+</passenger>
+</passengers>
