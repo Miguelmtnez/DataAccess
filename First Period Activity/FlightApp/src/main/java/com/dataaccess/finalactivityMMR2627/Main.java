@@ -1,5 +1,7 @@
 package com.dataaccess.finalactivityMMR2627;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class Main {
@@ -50,10 +52,81 @@ public class Main {
             return;
         }
 
+        if (args[0].equals("-f") || args[0].equals("--flights")) {
+            if (args.length != 4) {
+                AppLogger.warning("Malformed flights command.");
+                System.err.println("Error: Expected origin, destination, and date (YYYY-MM-DD).");
+                printHelp();
+                return;
+            }
+
+            try {
+                String origin = parseIataCode(args[1]);
+                String destination = parseIataCode(args[2]);
+                LocalDate date = LocalDate.parse(args[3]);
+                List<Flight> flights = FlightDAO.findAvailableFlights(origin, destination, date);
+                if (flights.isEmpty()) {
+                    System.out.println("No available flights found.");
+                } else {
+                    System.out.printf("%-12s %-25s %-12s %-12s %s%n",
+                            "Flight", "Airline", "Departure", "Arrival", "Free seats");
+                    for (Flight flight : flights) {
+                        System.out.printf("%-12s %-25s %-12s %-12s %d%n",
+                                flight.flightCode(), flight.airlineName(), flight.departure(),
+                                flight.arrival(), flight.availableSeats());
+                    }
+                }
+                AppLogger.info("Displayed " + flights.size() + " available flights from "
+                        + origin + " to " + destination + " on " + date + ".");
+            } catch (IllegalArgumentException | DateTimeParseException e) {
+                AppLogger.warning("Invalid flights command arguments: " + e.getMessage());
+                System.err.println("Error: " + e.getMessage());
+                printHelp();
+            } catch (Exception e) {
+                AppLogger.severe("Failed to retrieve available flights: " + e.getMessage());
+                System.err.println("Error retrieving flights: " + e.getMessage());
+            }
+            return;
+        }
+
+        if (args[0].equals("-o") || args[0].equals("--origins")) {
+            if (args.length != 1) {
+                AppLogger.warning("Malformed origins command.");
+                System.err.println("Error: --origins does not accept arguments.");
+                printHelp();
+                return;
+            }
+
+            try {
+                List<Airport> origins = FlightDAO.findOrigins();
+                if (origins.isEmpty()) {
+                    System.out.println("No origin airports found.");
+                } else {
+                    System.out.printf("%-8s %-40s %s%n", "IATA", "Airport", "City");
+                    for (Airport airport : origins) {
+                        System.out.printf("%-8s %-40s %s%n",
+                                airport.iataCode(), airport.name(), airport.city());
+                    }
+                }
+                AppLogger.info("Displayed " + origins.size() + " origin airports.");
+            } catch (Exception e) {
+                AppLogger.severe("Failed to retrieve origin airports: " + e.getMessage());
+                System.err.println("Error retrieving origin airports: " + e.getMessage());
+            }
+            return;
+        }
+
         // Si el comando no coincide con ninguna opción conocida
         AppLogger.warning("Unknown command received: " + args[0]);
         System.out.println("Unknown command: " + args[0]);
         printHelp();
+    }
+
+    private static String parseIataCode(String value) {
+        if (!value.matches("[A-Za-z]{3}")) {
+            throw new IllegalArgumentException("Airport codes must contain exactly three letters.");
+        }
+        return value.toUpperCase();
     }
 
     private static void printHelp() {
@@ -61,7 +134,7 @@ public class Main {
         System.out.println("Options:");
         System.out.println("  -h, --help: show this help");
         System.out.println("  -a, --add <filename.xml>: add the passengers in the XML file to the database.");
-        System.out.println("  -f, --flights <origin> <destination> <date>: show the flights available from origin to destination");
+        System.out.println("  -f, --flights <origin> <destination> <date>: show available flights and free seats (date: YYYY-MM-DD)");
         System.out.println("  -b, --buy <customerId> <flightId> <date>: buy a ticket for a flight in a specific date");
         System.out.println("  -o, --origins: show the origins of the flights");
         System.out.println("  -d, --destinations <origin>: show the destinations of the flights from origin");

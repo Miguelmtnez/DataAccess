@@ -7,3 +7,39 @@ INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitH
 nov 05, 2026 7:52:15 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
 GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
   Detail: Ya existe la llave (passportno)=(Y1234567).
+nov 12, 2026 7:40:24 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 12, 2026 7:40:25 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 12, 2026 7:40:25 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml
+nov 12, 2026 7:40:26 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
+GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
+  Detail: Ya existe la llave (passportno)=(Y1234567).
+nov 12, 2026 7:42:36 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 12, 2026 7:42:36 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 12, 2026 7:42:36 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml
+nov 12, 2026 7:42:36 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
+GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
+  Detail: Ya existe la llave (passportno)=(Y1234567).
+nov 12, 2026 7:45:32 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 12, 2026 7:45:32 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 12, 2026 7:45:32 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml
+nov 12, 2026 7:45:32 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
+GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
+  Detail: Ya existe la llave (passportno)=(Z7654321).
+nov 12, 2026 7:45:38 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 12, 2026 7:45:39 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 12, 2026 7:45:39 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml
+nov 12, 2026 7:45:39 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
+GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
+  Detail: Ya existe la llave (passportno)=(Z7654321).

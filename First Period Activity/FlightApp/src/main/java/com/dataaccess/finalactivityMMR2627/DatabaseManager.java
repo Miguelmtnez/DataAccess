@@ -1,8 +1,10 @@
 package com.dataaccess.finalactivityMMR2627;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.Properties;
 
 public class DatabaseManager {
@@ -26,8 +28,28 @@ public class DatabaseManager {
         String password = props.getProperty("db.password");
 
         Class.forName("org.postgresql.Driver");
-        connection = DriverManager.getConnection(url, user, password);
+        Connection newConnection = DriverManager.getConnection(url, user, password);
+        try {
+            createAvailableFlightsFunction(newConnection);
+            connection = newConnection;
+        } catch (Exception e) {
+            newConnection.close();
+            throw e;
+        }
         return connection;
+    }
+
+    private static void createAvailableFlightsFunction(Connection connection) throws Exception {
+        try (InputStream input = DatabaseManager.class.getClassLoader()
+                .getResourceAsStream("available_flights_mmr.sql")) {
+            if (input == null) {
+                throw new Exception("Cannot find available_flights_mmr.sql in resources.");
+            }
+            String sql = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(sql);
+            }
+        }
     }
 
     public static boolean isDatabaseAvailable() {
