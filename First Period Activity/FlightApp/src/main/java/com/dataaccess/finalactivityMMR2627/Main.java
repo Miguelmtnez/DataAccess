@@ -116,6 +116,72 @@ public class Main {
             return;
         }
 
+        if (args[0].equals("-d") || args[0].equals("--destinations")) {
+            if (args.length != 2) {
+                AppLogger.warning("Malformed destinations command.");
+                System.err.println("Error: Expected origin IATA code (e.g. -d BOM).");
+                printHelp();
+                return;
+            }
+
+            try {
+                String origin = parseIataCode(args[1]);
+                List<Airport> destinations = FlightDAO.findDestinations(origin);
+
+                if (destinations.isEmpty()) {
+                    System.out.println("No destinations found from origin: " + origin);
+                } else {
+                    System.out.printf("%-8s %-40s %s%n", "IATA", "Airport", "City");
+                    for (Airport airport : destinations) {
+                        System.out.printf("%-8s %-40s %s%n",
+                                airport.iataCode(), airport.name(), airport.city());
+                    }
+                }
+                AppLogger.info("Displayed " + destinations.size() + " destinations from " + origin + ".");
+            } catch (IllegalArgumentException e) {
+                AppLogger.warning("Invalid destination command arguments: " + e.getMessage());
+                System.err.println("Error: " + e.getMessage());
+                printHelp();
+            } catch (Exception e) {
+                AppLogger.severe("Failed to retrieve destinations: " + e.getMessage());
+                System.err.println("Error retrieving destinations: " + e.getMessage());
+            }
+            return;
+        }
+
+        if (args[0].equals("-b") || args[0].equals("--buy")) {
+            if (args.length != 4) {
+                AppLogger.warning("Malformed buy command.");
+                System.err.println("Error: Expected customer id, flight id, and date (e.g. -b Y1234567 FL1234 2026-12-15).");
+                printHelp();
+                return;
+            }
+
+            try {
+                String customerId = args[1];
+                String flightCode = args[2];
+                LocalDate travelDate = LocalDate.parse(args[3]);
+
+                int ticketNumber = FlightDAO.buyTicket(customerId, flightCode, travelDate);
+
+                System.out.println("Ticket successfully purchased!");
+                System.out.println("  Ticket number : " + ticketNumber);
+                System.out.println("  Passenger     : " + customerId);
+                System.out.println("  Flight        : " + flightCode);
+                System.out.println("  Travel Date   : " + travelDate);
+
+                AppLogger.info("Ticket #" + ticketNumber + " purchased for passenger " + customerId + " on flight " + flightCode + " for " + travelDate + ".");
+
+            } catch (DateTimeParseException e) {
+                AppLogger.warning("Invalid date format in buy command: " + args[3]);
+                System.err.println("Error: Invalid date format. Please use YYYY-MM-DD.");
+                printHelp();
+            } catch (Exception e) {
+                AppLogger.severe("Failed to purchase ticket: " + e.getMessage());
+                System.err.println("Error: " + e.getMessage());
+            }
+            return;
+        }
         // Si el comando no coincide con ninguna opción conocida
         AppLogger.warning("Unknown command received: " + args[0]);
         System.out.println("Unknown command: " + args[0]);

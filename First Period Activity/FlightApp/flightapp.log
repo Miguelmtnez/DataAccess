@@ -43,3 +43,21 @@ INFORMACIÓN: Starting passenger import from file: C:\Users\migue\Documents\GitH
 nov 12, 2026 7:45:39 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
 GRAVE: Failed to import passengers from C:\Users\migue\Documents\GitHub\DataAccess\First Period Activity\passengers.xml. Error: Transaction insertion failed. Cause: ERROR: llave duplicada viola restricción de unicidad «passenger_pkey»
   Detail: Ya existe la llave (passportno)=(Z7654321).
+nov 16, 2026 5:06:15 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 16, 2026 5:06:15 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 16, 2026 5:06:15 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Displayed 2 destinations from BOM.
+nov 16, 2026 5:10:14 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 16, 2026 5:10:14 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 16, 2026 5:10:14 P. M. com.dataaccess.finalactivityMMR2627.AppLogger severe
+GRAVE: Failed to purchase ticket: Passenger with passport 'Y1234567' does not exist.
+nov 16, 2026 5:12:25 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: FlightApp started.
+nov 16, 2026 5:12:25 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Database connection verified successfully.
+nov 16, 2026 5:12:25 P. M. com.dataaccess.finalactivityMMR2627.AppLogger info
+INFORMACIÓN: Ticket #17 purchased for passenger Z7654321 on flight AI2014 for 2026-12-15.
